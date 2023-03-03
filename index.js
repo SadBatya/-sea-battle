@@ -18,7 +18,7 @@ let view = {
 
 let model = {
     boardSize: 7,
-    numShipsa: 3,
+    numShips: 3,
     shipsSunk: 0,
     shipLength: 3,
 
@@ -29,14 +29,14 @@ let model = {
 
     fire: function(guess){
 
-        for (let i = 0; i<this.numShipsa; i++){
+        for (let i = 0; i < this.numShips; i++){
             let ship = this.ships[i];
             let index = ship.locations.indexOf(guess);
             if (index >= 0) {
                 ship.hits[index] = 'hit';
                 view.displayHit(guess);
                 view.displayMessage('HIT!');
-                if (this.shipsSunk(ship)){
+                if (this.isSunk(ship)){
                     view.displayMessage('You sank my battleship!');
                     this.shipsSunk++;
                 }
@@ -79,3 +79,42 @@ function parseGuess(guess){
     return null
 }
 
+let controller = {
+    guesses: 0,
+
+    processGuess: function(guess){
+        let location = parseGuess(guess);
+        if(location){
+            this.guesses++;
+            let hit = model.fire(location);
+            if(hit && model.shipsSunk === model.numShips){
+                view.displayMessage('You sank all my battleships, in ' + this.guesses + ' guesses');
+            }
+        }
+    }
+}
+
+function init(){
+    let fireButton = document.getElementById('fireButton');
+    fireButton.onclick = handleFireButton;
+    let guessInput = document.getElementById('guessInput');
+    guessInput.onkeypress = handleKeyPress;
+}
+
+function handleFireButton(){
+    let guessInput = document.getElementById('guessInput');
+    let guess = guessInput.value;
+    controller.processGuess(guess);
+
+    guessInput.value = '';
+}
+
+window.onload = init;
+
+function handleKeyPress(e){
+    let fireButton = document.getElementById('fireButton');
+    if (e.keyCode === 13){
+        fireButton.click();
+        return false
+    }
+}
