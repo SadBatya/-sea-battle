@@ -1,1 +1,1 @@
-https://sadbatya.github.io/-sea-battle/
+https://sadbatya.github.io/-sea-battle
